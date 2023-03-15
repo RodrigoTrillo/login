@@ -3,8 +3,10 @@ const session = require('express-session')
 const MongoStore = require('connect-mongo')
 const handlebars = require('express-handlebars')
 const mongoose = require('mongoose')
-const router = require('./router')
 const { response } = require('express')
+const passport = require('passport')
+const initializePassport = require('./config/passport.config')
+const router = require('./router')
 
 
 const app = express()
@@ -21,6 +23,9 @@ app.use(session({
     resave:false,
     saveUninitialized:false,
 }))
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 
 app.engine('handlebars', handlebars.engine())

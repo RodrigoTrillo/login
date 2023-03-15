@@ -18,6 +18,8 @@ router.get('/login',(req, res)=>{
     res.render('login.handlebars')
 })
 
-
+router.get('/forgotPasswor',(req, res)=>{
+    res.render('forgotPassword.handlebars')
+})
 
 module.exports = router
