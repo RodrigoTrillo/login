@@ -30,6 +30,7 @@ app.use(passport.session())
 
 app.engine('handlebars', handlebars.engine())
 app.set('views',__dirname + '/views')
+//app.set('view engine', 'handlebars')
 
 
 mongoose.connect('mongodb+srv://RodrigoTrillo:Rolly1560@clustercoder.gkuf5cv.mongodb.net/?retryWrites=true&w=majority')

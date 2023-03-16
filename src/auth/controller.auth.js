@@ -22,8 +22,15 @@ router.post('/',passport.authenticate('login',{failureRedirect:'/failLogin'}), a
    }
 })
 
-router.get('failLogin',(req,res)=>{
+router.get('/failLogin',(req,res)=>{
   res.json({error:'No se pudo iniciar sesión'})
+})
+
+router.get('/github',passport.authenticate('github',{scope:['user:email']}),async(req,res)=>{})
+
+router.get('/githubcallback', passport.authenticate('github',{failureRedirect:'/login'}),async (req,res)=>{
+  req.session.user = req.user
+  req.redirect('/')
 })
 
 router.get('/logout', (req, res)=>{
