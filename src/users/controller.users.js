@@ -21,4 +21,6 @@ router.get('/failRegister', async(req,res)=>{
   res.json({error: 'Fallo'})
 })
 
+router.get('/google/callback')
+
 module.exports = router;

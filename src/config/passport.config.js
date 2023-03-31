@@ -1,10 +1,18 @@
 const passport = require('passport')
 const local = require('passport-local')
 const GitHubStrategy = require('passport-github2')
+const GoogleStrategy = require('passport-google-oauth20')
 const User = require('../models/user.model')
 const { createHash, isValidPassword } = require('../utils/cryptPassword')
+const jwt = require('passport-jwt')
+const cookieExtractor = require('../utils/cookieExtractor')
+
+
 
 const LocalStrategy = local.Strategy;
+const JWTStrategy = jwt.Strategy
+const ExtractJwt = jwt.ExtractJwt
+
 const initializePassport= () =>{
     passport.use('register', new LocalStrategy(
         {
@@ -84,7 +92,55 @@ const initializePassport= () =>{
             return done(error)            
         }
     }))
+
+    passport.use('google',new GoogleStrategy({
+        clientID:'146914544979-h7ctitmea5vfq0eiivjvg1g40id7u1pt.apps.googleusercontent.com' ,
+        clientSecret:'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' ,
+        callbackURL:'http://localhost:3000/auth/google/callback'
+    },async(accesToken,refreshToken,profile,done)=>{
+        try {
+            console.log(profile)
+            const user = User.findOne({googleId: profile._json.sub})
+            if(!user){
+                const newUserInfo={
+                    googleId: profile._json.sub,
+                    first_name:profile._json.given_name,
+                    last_name:profile._json.family_name,
+                    age:18,
+                    email:profile._json.email,
+                    password:'',
+                    cart:id.cart,
+                    role:admin
+                }
+                const newUser = await User.create(newUserInfo)
+                return done(null, newUser)
+            }
+            done(null,user)
+        } catch (error) {
+            return done(error)
+        }
+    }))
+    
+    
+    
+    passport.use('jwt', new JWTStrategy({
+        jwtFromRequest:ExtractJwt.fromExtractors([cookieExtractor]),
+        secretOrKey:'coderSecret'
+    },async(jwt_payload, done)=>{
+        try {
+            done(null,jwt_payload)
+        } catch (error) {
+            done(error)
+        }
+        
+    }))
+
+
+
+
 }
+
+
 
 
 module.exports = initializePassport

@@ -7,6 +7,8 @@ const { response } = require('express')
 const passport = require('passport')
 const initializePassport = require('./config/passport.config')
 const router = require('./router')
+const morgan = require('morgan')
+const cookieParser = require('cookie-parser')
 
 
 const app = express()
@@ -14,6 +16,8 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(express.static(__dirname +'/public'))
+app.use(cookieParser)
+app.use(morgan('dev'))
 app.use(session({
     store: MongoStore.create({
         mongoUrl:'mongodb+srv://RodrigoTrillo:Rolly1560@clustercoder.gkuf5cv.mongodb.net/?retryWrites=true&w=majority',

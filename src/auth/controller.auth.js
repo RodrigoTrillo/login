@@ -2,8 +2,20 @@ const {Router} = require('express')
 const passport = require('passport')
 const User = require('../models/user.model')
 const { isValidPassword, createHash } = require('../utils/cryptPassword')
+const { generateToken } = require('../utils/jwt.utils')
 
 const router = Router()
+
+router.post('/login', (req,res)=>{
+  const {email,password} = req.body
+
+  const token = generateToken(email)
+  
+  res
+  .cookie('authToken',token,{maxAge: 6000,httpOnly:true})
+  .json({message:'Secion init'})
+  
+})
 
 router.post('/',passport.authenticate('login',{failureRedirect:'/failLogin'}), async (req, res)=>{
    try {
@@ -32,6 +44,15 @@ router.get('/githubcallback', passport.authenticate('github',{failureRedirect:'/
   req.session.user = req.user
   req.redirect('/')
 })
+
+
+router.get('/google', passport.authenticate('google',{scope:['profile']}),async(req,res)=>{})
+
+router.get('/google/callback', passport.authenticate('google',{failureRedirect:'/login'},async(req,res)=>{
+  req.session.user = req.user
+  req.redirect('/')
+}))
+
 
 router.get('/logout', (req, res)=>{
     req.session.destroy(error=>{
